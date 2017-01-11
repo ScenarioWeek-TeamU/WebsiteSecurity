@@ -8,7 +8,7 @@ class Snippet{
     }
 
     public function displayByUser($user_id){
-        $result = $this->db->select('*', 'snippets', array('user_id' => $user_id));
+        $result = $this->db->select('*', 'snippets', array('user_id' => $user_id), 'ORDER BY date DESC');
         if($result){
             return $result;
         }else{
@@ -17,7 +17,7 @@ class Snippet{
     }
 
     public function displayByUserPrivate($user_id, $is_private){
-        $result = $this->db->select('*', 'snippets', array('user_id' => $user_id, 'is_private' => $is_private));
+        $result = $this->db->select('*', 'snippets', array('user_id' => $user_id, 'is_private' => $is_private), 'ORDER BY date DESC');
         if($result){
             return $result;
         }else{
@@ -68,7 +68,6 @@ class Snippet{
 
     public function delete($snippet_id){
         $result = $this->db->delete('snippets', array('id' => $snippet_id), 1);
-
         if($result){
             return TRUE;
         }else{

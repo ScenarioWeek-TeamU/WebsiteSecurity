@@ -11,6 +11,7 @@
     // create a new instance of the needed controller
     switch($controller) {
       case 'pages':
+        //for rendering static pages
         $controller = new PagesController();
         break;
       case 'user':

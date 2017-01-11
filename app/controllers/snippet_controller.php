@@ -75,13 +75,26 @@ class SnippetController{
     public function delete(){
         if(isset($_GET['redirect_id'])){
             $action = "publicprofile&id=" . $_GET['redirect_id'];
+            $user_id = $_GET['redirect_id'];
         }else{
             $action = "profile";
+            $user_id = $_SESSION['user_id'];
         }
         if(isset($_GET['id'])){
             $snippet_id = $_GET['id'];
             try{
                 $this->model->delete($snippet_id);
+
+                //update the recent snippet of user
+                $user = $this->usermodel->find($user_id);
+                if(intval($user[0]['recent_snippet_id']) === intval($snippet_id)){ //deleted snippet id is the recent snippet id
+                    $recentsnippets = $this->model->displayByUserPrivate($user_id, 0);
+                    if(empty($recentsnippets)){
+                        $this->usermodel->update($user_id, array('recent_snippet_id' => 0));
+                    }else{
+                        $this->usermodel->update($user_id, array('recent_snippet_id' => intval($recentsnippets[0]['id'])));
+                    }
+                }
                 header('Location:' . ROOTPATH . 'index.php?controller=user&action=' . $action);
             }catch(Exception $ex){
                 $err = $ex->getMessage();

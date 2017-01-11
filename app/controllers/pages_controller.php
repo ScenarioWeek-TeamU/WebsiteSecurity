@@ -6,11 +6,7 @@
 
   class PagesController {
     public function login() {
-      if(isLoggedIn()){
-          require_once (ABSPATH . 'views/home.php');
-      }else{
-          require_once(ABSPATH . 'views/login.php');
-      }
+        require_once(ABSPATH . 'views/login.php');
     }
 
     public function register() {

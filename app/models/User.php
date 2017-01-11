@@ -8,7 +8,7 @@ class User{
     }
 
     public function find($user_id){
-        $result = $this->db->select('*', 'users', array('user_id' => $user_id));
+        $result = $this->db->select('*', 'users', array('user_id' => $user_id), 'ORDER BY user_id DESC');
         if(isset($result)){
             return $result;
         }else{
@@ -26,7 +26,7 @@ class User{
     }
 
     public function authenticate($username, $password){
-        $result = $this->db->select('*', 'users', array('username' => $username));
+        $result = $this->db->select('*', 'users', array('username' => $username), 'ORDER BY user_id DESC');
         if($result){
             if(isset($result[0]['password'])){
                 /*if (password_verify($password, $result[0]['password'])) {*/
@@ -45,15 +45,6 @@ class User{
 
     public function create($username, $password, $icon_url, $homepage_url){
         //Check if username exists
-        /*$sql = 'SELECT user_id FROM users WHERE username = ? LIMIT 1';
-        $stmt = $this->db->getCon()->prepare($sql);
-        $array = array($username);
-        $stmt->execute($array);
-
-        if($stmt->rowCount() >= 1){
-            throw new Exception("Username already exists.");
-        }
-*/
         $count = $this->db->count('users', array('username' => $username));
         if(intval($count) >= 1){
             throw new Exception("Username already exists.");
@@ -62,11 +53,7 @@ class User{
         $uid = $this->db->insert('users', array('username' => $username, 'password' => $password, 'icon_url' => $icon_url, 'homepage_url' => $homepage_url));
 
         if(isset($uid)){
-            //$query = 'SELECT * FROM users WHERE user_id = ? LIMIT 1';
-            //$stmt = $this->db->getCon()->prepare($query);
-            //$array = array($uid);
-            //$result = $stmt->execute($array);
-            $result = $this->db->select('*', 'users', array('user_id' => $uid));
+            $result = $this->db->select('*', 'users', array('user_id' => $uid), 'ORDER BY user_id DESC');
             return $result[0];
         }else{
             throw new Exception("Error: INSERT into `users` failed.");

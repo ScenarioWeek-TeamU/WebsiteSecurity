@@ -61,14 +61,14 @@ class Database{
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }*/
 
-    public function select($select, $table, $where) {
+    public function select($select, $table, $where, $suffix) {
         $whereDetails = NULL;
         foreach ($where as $key => $value) {
             $whereDetails .= "$key = :$key AND ";
         }
         $whereDetails = rtrim($whereDetails, 'AND ');
 
-        $sql = "SELECT $select FROM $table WHERE $whereDetails";
+        $sql = "SELECT $select FROM $table WHERE $whereDetails $suffix";
         $stmt = $this->con->prepare($sql);
         foreach ($where as $key => $value) {
             $stmt->bindValue(":$key", $value);

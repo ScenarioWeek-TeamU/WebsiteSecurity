@@ -3,16 +3,13 @@ require_once $_SERVER["DOCUMENT_ROOT"] . '/include/path.php';
 
 include_once ABSPATH . 'include/functions.php';
 
-require ABSPATH . 'models/Snippet.php';
-require ABSPATH . 'models/User.php';
+require ABSPATH . 'models/File.php';
 
-class SnippetController{
+class FileController{
     private $model;
-    private $usermodel;
 
     public function __construct($db){
-        $this->model = new Snippet($db);
-        $this->usermodel = new User($db);
+        $this->model = new File($db);
     }
 
     public function index(){
