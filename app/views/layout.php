@@ -50,7 +50,7 @@ include_once ABSPATH . '/include/functions.php';
         if(isLoggedIn()){
           echo '<li><a href="' . ROOTPATH . 'index.php?controller=user&action=profile"><strong>My Profile</strong></a></li>
                 <li><a href="' . ROOTPATH . 'index.php?controller=snippet&action=mysnippets"><strong>My Snippets</strong></a></li>
-                <li><a href="' . ROOTPATH . 'index.php?controller=file&action=upload"><strong>Upload</strong></a></li>';
+                <li><a href="' . ROOTPATH . 'index.php?controller=file&action=showfiles"><strong>My Files</strong></a></li>';
           if(canPostSnippet()){
             echo'<li><a href="' . ROOTPATH . 'index.php?controller=pages&action=newsnippet"><strong>New Snippet</strong></a></li>';
           }

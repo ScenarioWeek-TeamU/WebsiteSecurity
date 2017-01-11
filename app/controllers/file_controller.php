@@ -12,77 +12,90 @@ class FileController{
         $this->model = new File($db);
     }
 
-    public function index(){
+    public function showfiles(){
         try{
-            $posts = $this->model->displayRecentPerUser();
-            require_once(ABSPATH . 'views/index.php');
+            $user_id = $_SESSION['user_id'];
+            $files = $this->model->displayByUser($user_id);
+
+            require_once(ABSPATH . 'views/myfiles.php');
         }catch(Exception $ex){
             $err = $ex->getMessage();
             header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=error&err='.$err);
         }
     }
 
-    public function mysnippets(){
-        if(!isLoggedIn()){
-            header('Location:' . ROOTPATH . 'index.php?controller=pages&action=login');
-        }else{
-            try{
-                $user_id = $_SESSION['user_id'];
-                $snippets = $this->model->displayByUser($user_id);
-            }catch(Exception $ex){
-                $err = $ex->getMessage();
-                    header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=error&err='.$err);
-            }
-
-            require_once(ABSPATH . 'views/mysnippets.php');
-        }
-    }
-
-    public function create(){
+    public function upload(){
         //If the server receives a POST request
-        if($_POST){
-            if(isset($_POST['content'], $_POST['is_private'], $_SESSION['user_id'])){
-                $content = $_POST['content'];
-                if(empty(trim($content))){
-                    $err = "Please enter a snippet";
-                    header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=newsnippet&err='.$err);
-                }else{
-                    $is_private = intval($_POST['is_private']);
-                    $user_id = $_SESSION['user_id'];
+        if(isset($_FILES['upload'])){
+            $file_size = $_FILES['upload']['size'];
+            $file_tmp = $_FILES['upload']['tmp_name'];
+            $a = explode('.', $_FILES['upload']['name']);
+            $b = end($a);
+            $file_ext = strtolower($b);
 
-                    try{
-                        $snippet_id = $this->model->create($content, $is_private, $user_id);
-                        if($is_private===0){ //if public
-                            //update the recent_snippet_id in the user table
-                            $this->usermodel->update($user_id, array('recent_snippet_id' => $snippet_id));
-                        }
-                        header('Location:' . ROOTPATH . 'index.php?controller=snippet&action=index');
-                    }catch(Exception $ex){
-                        $err = $ex->getMessage();
-                        header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=newsnippet&err='.$err);
+            if($file_size > 2097152) {
+                $err = 'File size cannot exceed 2 MB';
+                header('Location: ' . ROOTPATH . 'index.php?controller=file&action=showfiles&err='.$err);
+            }else{
+                try{
+                    $user_id = $_SESSION['user_id'];
+                    $timestamp = microtime(true);
+                    $file_name = str_replace(".", "", $timestamp) . rand(1000, 9999) . '.' . $file_ext;
+                    $upload_path = ABSPATH . "uploads/" . $user_id;
+                    $file_path = $upload_path . "/" . $file_name;
+                    if(!file_exists($upload_path)) {
+                        mkdir($upload_path, 0775, true);
                     }
+
+                    //check if file with same name exists
+                    //keep renaming until filename is unique
+                    while(file_exists($file_path)){
+                        $timestamp = microtime(true);
+                        $file_name = str_replace(".", "", $timestamp) . rand(1000, 9999) . '.' . $file_ext;
+                        $file_path = $upload_path . "/" . $file_name;
+                    }
+
+                    $file_url = ROOTPATH . "uploads/" . $user_id . "/" . $file_name;
+
+                    //Upload the file
+                    if(move_uploaded_file($file_tmp, $file_path)) {
+                        //save path to database
+                        $this->model->create($file_path, $file_url, $user_id);
+                        header('Location:' . ROOTPATH . 'index.php?controller=file&action=showfiles');
+                    }
+
+                }catch(Exception $ex){
+                        $err = $ex->getMessage();
+                        header('Location: ' . ROOTPATH . 'index.php?controller=file&action=showfiles&err='.$err);
                 }
             }
         }else{
             $err = 'Invalid access';
-            header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=login&err='.$err);
+            header('Location: ' . ROOTPATH . 'index.php?controller=file&action=showfiles&err='.$err);
         }
     }
 
     public function delete(){
-        if(isset($_GET['redirect_id'])){
-            $action = "publicprofile&id=" . $_GET['redirect_id'];
-        }else{
-            $action = "profile";
-        }
         if(isset($_GET['id'])){
-            $snippet_id = $_GET['id'];
-            try{
-                $this->model->delete($snippet_id);
-                header('Location:' . ROOTPATH . 'index.php?controller=user&action=' . $action);
-            }catch(Exception $ex){
-                $err = $ex->getMessage();
-                header('Location: ' . ROOTPATH . 'index.php?controller=user&action=' . $action . '&err='.$err);
+            $file_id = $_GET['id'];
+
+            //Retrieve file path from database
+            $files = $this->model->displayByID($file_id);
+            $file_path = $files[0]['file_path'];
+
+            //Delete file from server
+            if(unlink($file_path)){
+                //Delete file from database
+                try{
+                    $this->model->delete($file_id);
+                    header('Location:' . ROOTPATH . 'index.php?controller=file&action=showfiles');
+                }catch(Exception $ex){
+                    $err = $ex->getMessage();
+                    header('Location: ' . ROOTPATH . 'index.php?controller=file&action=showfiles&err='.$err);
+                }
+            }else{
+                $err = "Could not delete file from server";
+                header('Location: ' . ROOTPATH . 'index.php?controller=file&action=showfiles&err='.$err);
             }
         }else{
             $err = 'Invalid access';

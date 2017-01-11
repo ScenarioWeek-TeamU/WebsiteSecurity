@@ -20,6 +20,9 @@
       case 'snippet':
         $controller = new SnippetController($db);
         break;
+      case 'file':
+        $controller = new FileController($db);
+        break;
     }
 
     // call the action
@@ -30,7 +33,8 @@
   // we consider those "allowed" values
   $controllers = array('pages' => ['login', 'register', 'registersuccess', 'newsnippet', 'error'],
                        'user' => ['login', 'logout', 'register', 'update', 'changerole', 'profile', 'publicprofile', 'editmyprofile', 'edituserprofile'],
-                       'snippet' => ['index', 'mysnippets', 'create', 'delete', 'edit']);
+                       'snippet' => ['index', 'mysnippets', 'create', 'delete', 'edit'],
+                       'file' => ['showfiles', 'upload', 'delete']);
 
   // check that the requested controller and action are both allowed
   // if the user tries to access something else, redirect the user to the error action of the pages controller

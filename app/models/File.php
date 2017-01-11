@@ -8,7 +8,7 @@ class File{
     }
 
     public function displayByUser($user_id){
-        $result = $this->db->select('*', 'snippets', array('user_id' => $user_id));
+        $result = $this->db->select('*', 'files', array('user_id' => $user_id), 'ORDER BY date DESC');
         if($result){
             return $result;
         }else{
@@ -16,15 +16,24 @@ class File{
         }
     }
 
+    public function displayByID($id){
+        $result = $this->db->select('*', 'files', array('id' => $id), 'ORDER BY date DESC');
+        if($result){
+            return $result;
+        }else{
+            return NULL;
+        }
+    }
+/*
     public function displayAllPublic(){
         $result = $this->db->selectSuffix("s.id, s.content, s.is_private, s.date, s.user_id, u.username", "snippets s JOIN users u ON u.user_id = s.user_id WHERE s.is_private = 0 ORDER BY s.date DESC");
         return $result;
-    }
+    }*/
 
-    public function create($file_path, $user_id){
+    public function create($file_path, $file_url, $user_id){
         date_default_timezone_set('Europe/London');
 
-        $file_id = $this->db->insert('files', array('file_path' => $file_path, 'user_id' => $user_id, 'date' => date('Y-m-d H:i:s')));
+        $file_id = $this->db->insert('files', array('file_path' => $file_path, 'file_url' => $file_url, 'user_id' => $user_id, 'date' => date('Y-m-d H:i:s')));
 
         if(is_numeric($file_id)){
             return $file_id;
