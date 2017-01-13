@@ -49,7 +49,7 @@ class User{
             throw new Exception("Username already exists.");
         }
         //Proceed to creating user row
-        $uid = $this->db->insert('users', array('username' => $username, 'password' => $password, 'icon_url' => $icon_url, 'homepage_url' => $homepage_url));
+        $uid = $this->db->insert('users', array('username' => $username, 'password' => $password, 'icon_url' => $icon_url, 'homepage_url' => $homepage_url, 'user_role' => 3));
 
         if(isset($uid)){
             $result = $this->db->select('*', 'users', array('user_id' => $uid), 'ORDER BY user_id DESC');

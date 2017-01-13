@@ -19,7 +19,7 @@ if(!isset($_SESSION))
 
           <h3>Password</h3>
           <div class="row">
-            <div class="col-md-12"> <input type="password" class="form-control" name="password" placeholder="Password" value=""><br></div>
+            <div class="col-md-12"> <input type="password" class="form-control" name="password" placeholder="Password" value="<?php echo $user['password'];?>"><br></div>
           </div>
 
           <h3>Profile Icon URL</h3>

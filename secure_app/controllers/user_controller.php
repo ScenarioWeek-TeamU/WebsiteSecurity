@@ -231,7 +231,7 @@ class UserController{
                 $password = $_POST['password'];
                 $icon_url = $_POST['icon_url'];
                 $homepage_url = $_POST['homepage_url'];
-                $profile_colour = $_POST['profile_colour'];
+                $user_role = $_POST['user_role'];
 
                 if(empty(trim($username))){
                     $err = "Please enter a username";
@@ -245,15 +245,15 @@ class UserController{
                     $err = "Please enter a homepage URL";
                     echo '<script>alert("' . $err . '");</script>';
                     die();
-                }else if(empty(trim($profile_colour))){
-                    $err = "Please enter a profile colour";
-                    echo '<script>alert("' . $err . '");</script>';
-                    die();
                 }else{
-                    $data = array('username' => $username, 'icon_url' => $icon_url, 'homepage_url' => $homepage_url, 'profile_colour' => $profile_colour);
+                    $data = array('username' => $username, 'icon_url' => $icon_url, 'homepage_url' => $homepage_url, 'user_role' => $user_role);
 
                     if(!empty($password)){
-                        $data = array('username' => $username, 'password' => $password, 'icon_url' => $icon_url, 'homepage_url' => $homepage_url, 'profile_colour' => $profile_colour);
+                        $data = array_merge($data, array('password' => $password));
+                    }
+
+                    if(!empty($user_role)){
+                        $data = array_merge($data, array('user_role' => $user_role));
                     }
 
                     try{
