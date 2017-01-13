@@ -42,6 +42,7 @@ if(!function_exists('hash_equals'))
     }
 }
 
+
 function isLoggedIn(){
     if(isset($_SESSION['username'], $_SESSION['user_id'], $_SESSION['user_role'], $_SESSION['session_hash'])){
 

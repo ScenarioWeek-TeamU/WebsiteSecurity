@@ -49,8 +49,13 @@ echo '<div class="children" style=";padding-right: 50px;padding-left: 50px">
                 <a href="' . ROOTPATH . 'index.php?controller=user&action=publicprofile&id=' . $post['user_id'] . '"><h3 class="panel-title">' . htmlspecialchars($post['username']) . '</h3></a>
             </div>
             <div class="panel-body">
+              <div class="col-md-2">
+              <img src="' . $post['icon_url'] . '" name="aboutme" width="140" height="140" class="img-circle">
+              </div>
+              <div class="col-md-10">
               "' . htmlspecialchars($post['content']) . '" <strong>' . $post['date'] . '</strong>
               <br><br><a class="btn btn-warning" href="' . ROOTPATH . 'index.php?controller=user&action=publicprofile&id=' . $post['user_id'] . '">Profile</a> <a class="btn btn-success" href="' . htmlspecialchars($post['homepage_url']) . '" target="_blank">Homepage</a>
+              </div>
             </div>
           </div>
           ';

@@ -4,6 +4,9 @@ if(!isset($_SESSION))
 	session_start();
 }
 
+  $token = sha1(uniqid());
+  $_SESSION['delete_snippet_token'] = $token;
+
 if(!isset($user) || empty($user)){
   header('Location: index.php?controller=snippet&action=index');
 }
@@ -48,8 +51,11 @@ if(!isset($user) || empty($user)){
               echo'
               <div class="alert ' . $alert_col . '">';
               if(isLoggedIn() && (isAdmin() || strcmp($_SESSION['user_id'], $user['user_id']) === 0)){
-                echo'
-                <a href="' . ROOTPATH . 'index.php?controller=snippet&action=delete&id=' . $snippet['id'] . '&redirect_id=' . $user_id . '" onclick="return confirmDialog();"><button type="button" class="close" data-dismiss="alert">&times;</button></a>';
+                echo'<form method="post" action="' . ROOTPATH . 'index.php?controller=snippet&action=delete">
+                <input type="hidden" name="token" value="' . $token . '">
+                <input type="hidden" name="id" value="' . $snippet['id'] . '">
+                <input type="hidden" name="redirect_id" value="' . $user_id . '">
+                <button type="submit" onclick="return confirmDialog();" class="close" data-dismiss="alert">&times;</button></form>';
               }
               echo'
                 <h4 class="alert-heading">"' . htmlspecialchars($snippet['content']) . '"</h4><strong>Posted on ' . $snippet['date'] . '</strong>

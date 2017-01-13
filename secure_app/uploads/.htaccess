@@ -1,5 +1,4 @@
-deny from all
-<Files ~ ¡°^w+.(gif|jpe?g|png|txt|mp3|mp4)$¡±>
-order deny,allow
-allow from all
+Order allow,deny
+<Files ~ "\.(jpeg|jpg|gif|png|txt|mp3|mp4)$">
+Allow from all
 </Files>

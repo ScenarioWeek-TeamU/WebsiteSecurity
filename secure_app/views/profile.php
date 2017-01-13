@@ -3,6 +3,8 @@ if(!isset($_SESSION))
 {
 	session_start();
 }
+  $token = sha1(uniqid());
+  $_SESSION['delete_snippet_token'] = $token;
 ?>
 
 <div class="children" style="padding:20px;padding-top: 20px;padding-right: 50px;padding-left: 50px">
@@ -38,8 +40,11 @@ if(!isset($_SESSION))
                   $alert_col = "alert-success";
               }
               echo'
-              <div class="alert ' . $alert_col . '">
-                <a href="' . ROOTPATH . 'index.php?controller=snippet&action=delete&id=' . $snippet['id'] . '" onclick="return confirmDialog();"><button type="button" class="close" data-dismiss="alert">&times;</button></a>
+              <div class="alert ' . $alert_col . '">';
+              echo'<form method="post" action="' . ROOTPATH . 'index.php?controller=snippet&action=delete">
+                <input type="hidden" name="token" value="' . $token . '">
+                <input type="hidden" name="id" value="' . $snippet['id'] . '">
+                <button type="submit" onclick="return confirmDialog();" class="close" data-dismiss="alert">&times;</button></form>
                 <h4 class="alert-heading">"' . htmlspecialchars($snippet['content']) . '"</h4><strong>Posted on ' . $snippet['date'] . '</strong>
               </div>
               ';

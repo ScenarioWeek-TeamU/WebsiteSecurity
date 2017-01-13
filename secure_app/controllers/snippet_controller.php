@@ -78,16 +78,25 @@ class SnippetController{
             die();
         }
 
-        if(isset($_GET['redirect_id'])){
-            $action = "publicprofile&id=" . $_GET['redirect_id'];
-            $user_id = $_GET['redirect_id'];
+        //validate the token
+        $token = $_SESSION['delete_snippet_token'];
+        unset($_SESSION['delete_snippet_token']);
+        if (!$token || $_POST['token']!=$token) {
+            $err = "Invalid access";
+            header('Location:' . ROOTPATH . 'index.php?controller=pages&action=error&err=' . $err);
+            die();
+        }
+
+        if(isset($_POST['redirect_id'])){
+            $action = "publicprofile&id=" . $_POST['redirect_id'];
+            $user_id = $_POST['redirect_id'];
         }else{
             $action = "profile";
             $user_id = $_SESSION['user_id'];
         }
 
-        if(isset($_GET['id'])){
-            $snippet_id = $_GET['id'];
+        if(isset($_POST['id'])){
+            $snippet_id = $_POST['id'];
             if(isAdmin() || $this->model->isSnippetOwner($_SESSION['user_id'], $snippet_id)){
                 try{
                     $this->model->delete($snippet_id);

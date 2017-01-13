@@ -115,10 +115,20 @@ class UserController{
                 if(empty(trim($username))){
                     $err = "Please enter your username";
                     header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=login&err='.$err);
+                    die();
                 }else if(empty($password)){
                     $err = "Please enter your password";
                     header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=login&err='.$err);
+                    die();
                 }else{
+                    //check for brute force attack
+                    $ip_address = $_SERVER['REMOTE_ADDR'];
+                    if($this->model->checkLoginAttempts($username, $ip_address)){
+                        $err = "You have failed too many login attempts (4 attempts). Please try again after 30 minutes.";
+                        header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=login&err='.$err);
+                        die();
+                    }
+
                     try{
                         $userData = $this->model->authenticate($username, $password);
 
@@ -134,7 +144,9 @@ class UserController{
                             $err = "Database error has occured. Please try again.";
                             header('Location:' . ROOTPATH . 'index.php?controller=pages&action=login&err='.$err);
                         }
-                    }catch(Exception $ex){ // Login failed
+                    }catch(Exception $ex){ // Login failed due to invalid credentials
+                        $this->model->logFailedLoginAttempt($username, $ip_address);
+
                         $err = $ex->getMessage();
                         header('Location: ' . ROOTPATH . 'index.php?controller=pages&action=login&err='.$err);
                     }
