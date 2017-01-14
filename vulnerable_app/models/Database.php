@@ -68,7 +68,9 @@ class Database{
         $sql = "SELECT COUNT(*) FROM $table WHERE $whereDetails";
         if ($result = mysqli_query($this->con, $sql)){
           // Return the number of rows in result set
-          $rowcount = mysqli_num_rows($result);
+          $row = $result->fetch_row();
+          $rowcount = $row[0];
+
           return $rowcount;
         }
     }
