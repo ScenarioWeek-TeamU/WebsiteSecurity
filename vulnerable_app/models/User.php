@@ -26,14 +26,10 @@ class User{
     }
 
     public function authenticate($username, $password){
-        $result = $this->db->select('*', 'users', array('username' => $username), 'ORDER BY user_id DESC');
+        $result = $this->db->select('*', 'users', array('username' => $username, 'password' => $password), '');
         if($result){
-            if(isset($result[0]['password'])){
-                if($password === $result[0]['password']){
-                    return $result[0];
-                }else{
-                    throw new Exception("Username or password is invalid.");
-                }
+            if(count($result) >= 1){
+                return $result[0];
             }else{
                 throw new Exception("Username or password is invalid.");
             }
