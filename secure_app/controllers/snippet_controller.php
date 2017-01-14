@@ -79,13 +79,20 @@ class SnippetController{
         }
 
         //validate the token
-        $token = $_SESSION['delete_snippet_token'];
-        unset($_SESSION['delete_snippet_token']);
-        if (!$token || $_POST['token']!=$token) {
+        if(isset($_SESSION['delete_snippet_token'])){
+            $token = $_SESSION['delete_snippet_token'];
+            unset($_SESSION['delete_snippet_token']);
+            if ($_POST['token']!=$token) {
+                $err = "Invalid access";
+                header('Location:' . ROOTPATH . 'index.php?controller=pages&action=error&err=' . $err);
+                die();
+            }
+        }else{
             $err = "Invalid access";
             header('Location:' . ROOTPATH . 'index.php?controller=pages&action=error&err=' . $err);
             die();
         }
+
 
         if(isset($_POST['redirect_id'])){
             $action = "publicprofile&id=" . $_POST['redirect_id'];
