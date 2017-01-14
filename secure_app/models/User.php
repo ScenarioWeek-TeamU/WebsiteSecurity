@@ -74,7 +74,7 @@ class User{
         // All login attempts are counted from the past 30 minutes.
         $valid_attempts = $now - (1 * 30 * 60);
 
-        $arr = $this->db->select('id', 'login_attempts', array('username' => $username, 'ip_address' => $ip_address), "AND timestamp > ".$valid_attempts);
+        $arr = $this->db->select('id', 'login_attempts', array('username' => $username, 'ip_address' => $ip_address), "AND timestamp > '$valid_attempts'");
         $count = count($arr);
 
         if(intval($count) >= 4){
@@ -85,7 +85,8 @@ class User{
     }
 
     public function logFailedLoginAttempt($username, $ip_address){
-        $this->db->insert('login_attempts', array('username' => $username, 'ip_address' => $ip_address));
+        $now = time();
+        $this->db->insert('login_attempts', array('username' => $username, 'ip_address' => $ip_address, 'timestamp' => $now));
     }
 }
 
